@@ -17,7 +17,7 @@
     background-color: var(--bg-card);
     border: var(--border-primary);
     border-radius: 10px;
-    margin: 50px 20%;
+    margin: 50px 6%;
     padding: 20px 40px;
 }
 
@@ -52,6 +52,31 @@
 
 .game-achievement-page-game-percent {
     font-size: 20px;
+}
+
+.game-achievement-page-trophy-count-container {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding-left: 30px;
+    margin-left: -20px;
+    border-left: 1px solid var(--border);
+    height: 100%;
+}
+
+.game-achievement-page-trophy-count-container div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.game-achievement-page-trophy-count-icon {
+    width: 40px;
+}
+
+.game-achievement-page-trophy-count-text {
+
 }
 
 .game-achievements-columns {
@@ -114,6 +139,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-width: 370px;
 }
 
 .game-achievement-page-name {
@@ -122,6 +148,7 @@
 
 .game-achievement-page-description {
     color: var(--text-secondary);
+    word-wrap: break-word;
 }
 
 .game-achievement-page-time-global-percent-container {
@@ -132,13 +159,33 @@
     align-items: flex-end;
 }
 
+.achievement-clock-icon-container {
+    display: flex;
+    gap: 10px;
+}
+
+.achievement-clock-icon-container img {
+    width: 20px;
+}
+
 .game-achievement-page-time {
     letter-spacing: 0.4px;
 }
 
+.game-achievement-page-trophy-globl-percent-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.game-achievement-page-trophy-icon {
+    width: 40px;
+}
+
 .game-achievement-page-global-percent {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .platinum-message {
@@ -152,15 +199,15 @@
 }
 
 .platinum-icon {
-    font-size: 150px;
-    filter: drop-shadow(0 0 12px rgb(180, 220, 255));
+    width: 400px;
+    filter: drop-shadow(0 0 20px rgba(180, 220, 255, 0.2));
 }
 
 .platinum-title {
     font-size: 32px;
     font-weight: bold;
     color: rgb(200, 230, 255);
-    text-shadow: 0 0 10px rgb(140, 200, 255);
+    text-shadow: 0 0 10px rgb(140, 200, 255, 0.6);
 }
 
 .platinum-subtitle {

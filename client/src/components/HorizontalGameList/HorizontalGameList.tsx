@@ -11,6 +11,9 @@ import { getGameCover } from '../../utils/getGameCover';
 
 import type { Game } from '../../types/gamesType';
 
+import goldenTrophy from '../../assets/golden_trophy.png';
+import clock from '../../assets/icons/clock.svg';
+
 type ScreenItem = {
     id: Game['id'];
     steamId: Game['steam_id'];
@@ -209,13 +212,23 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
                                         onCloseMenu={handleCloseMenu}
                                     />
                                     <div className={`game-fast-info ${selectedIndex === index ? 'open' : ''}`}>
-                                        <p style={{border: 'none'}}>{item.name}</p>
-                                        <p>
-                                            🕑 {item.playtime < 60
-                                                ? `${item.playtime}m`
-                                                : `${Math.floor(item.playtime / 60)}h${item.playtime % 60 > 0 ? ` ${item.playtime % 60}m` : ''}`}
-                                        </p>
-                                        <p>{item.status === 'completed' ? '🏆 Zerado' : ''}</p>
+                                        <p>{item.name}</p>
+                                        <div className="home-icon-container">
+                                            <img src={clock} />
+                                            <p> 
+                                                {item.playtime < 60
+                                                    ? `${item.playtime}m`
+                                                    : `${Math.floor(item.playtime / 60)}h${item.playtime % 60 > 0 ? ` ${item.playtime % 60}m` : ''}`}
+                                            </p>
+                                        </div>
+                                        <div className="home-icon-container">
+                                            {item.status === 'completed' && (
+                                                <>
+                                                    <img className="trophy-icon" src={goldenTrophy} />
+                                                    <p>Zerado</p>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))

@@ -43,6 +43,16 @@
 .game-fast-info p {
     font-size: 16px;
     color: var(--text-secondary);
-    border-left: 1px solid var(--border);
     padding: 0 10px;
+}
+
+.home-icon-container {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;;
+    border-left: 1px solid var(--border);
+}
+
+.trophy-icon {
+    width: 21px;
 }

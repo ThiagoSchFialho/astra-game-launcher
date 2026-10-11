@@ -8,6 +8,12 @@ import { useSound } from '../../hooks/useSound';
 import type { Game } from '../../types/gamesType';
 import type { Achievement } from '../../types/achievementType';
 
+import platinumTrophy from '../../assets/platinum_trophy.png';
+import goldenTrophy from '../../assets/golden_trophy.png';
+import silverTrophy from '../../assets/silver_trophy.png';
+import bronzeTrophy from '../../assets/bronze_trophy.png';
+import clock from '../../assets/icons/clock.svg';
+
 interface GamePageProps {
     gameId: string,
     onExitGamePage: () => void
@@ -16,6 +22,12 @@ interface GamePageProps {
 type Column = 'left' | 'right';
 
 type Tier = 'bronze' | 'silver' | 'gold';
+
+const trophyTier = {
+    bronze: bronzeTrophy,
+    silver: silverTrophy,
+    gold: goldenTrophy
+}
 
 const SCROLL_DURATION = 90;
 
@@ -183,6 +195,15 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
         };
     }, [activeColumn, activeIndex, achievements]);
 
+    const trophyCounts = unlockedAchievements.reduce<Record<Tier, number>>(
+        (acc, a) => {
+            acc[getTier(a.global_percent)]++;
+            return acc;
+        },
+        { bronze: 0, silver: 0, gold: 0 }
+    );
+    const platinumCount = achievements.length > 0 && lockedAchievements.length === 0 ? 1 : 0;
+
     // ===== Render de cada item =====
     const renderItem = (achievement: Achievement, index: number, column: Column) => {
         const isFocused = activeColumn === column && indexes[column] === index;
@@ -215,16 +236,20 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                     </div>
 
                     <div className="game-achievement-page-time-global-percent-container">
-                        <div>
-                            <p className="game-achievement-page-time">🕑 {formatarData(achievement.unlocked_at)}</p>
+                        <div className="achievement-clock-icon-container">
+                            <img src={clock} />
+                            <p className="game-achievement-page-time">{formatarData(achievement.unlocked_at)}</p>
                         </div>
-                        <p
-                            className={`game-achievement-page-global-percent ${
-                                `tier-${tier}`
-                            }`}
-                        >
-                            {achievement.global_percent}%
-                        </p>
+                        <div className="game-achievement-page-trophy-globl-percent-container">
+                            <img className="game-achievement-page-trophy-icon" src={trophyTier[tier]} />
+                            <p
+                                className={`game-achievement-page-global-percent ${
+                                    `tier-${tier}`
+                                }`}
+                            >
+                                {achievement.global_percent}%
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -248,6 +273,19 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                         </div>
                         <p className="game-achievement-page-game-percent">{Math.floor(percent)}%</p>
                     </div>
+                    <div className="game-achievement-page-trophy-count-container">
+                        {[
+                            { icon: platinumTrophy, count: platinumCount },
+                            { icon: goldenTrophy, count: trophyCounts.gold },
+                            { icon: silverTrophy, count: trophyCounts.silver },
+                            { icon: bronzeTrophy, count: trophyCounts.bronze },
+                        ].map(({ icon, count }) => (
+                            <div key={icon}>
+                                <img className="game-achievement-page-trophy-count-icon" src={icon} />
+                                <p className="game-achievement-page-trophy-count-text">{count}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="game-achievements-columns">
@@ -264,7 +302,7 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                     >
                         {achievements.length > 0 && lockedAchievements.length === 0 ? (
                             <div className="platinum-message">
-                                <span className="platinum-icon">🏆</span>
+                                <img className="platinum-icon" src={platinumTrophy} />
                                 <p className="platinum-title">Platinado!</p>
                                 <p className="platinum-subtitle">Parabéns, trabalho feito.</p>
                             </div>
