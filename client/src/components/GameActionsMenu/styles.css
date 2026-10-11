@@ -16,7 +16,7 @@
     left: 50%;
     transform: translate(-50%, -100px);
     padding: 10px;
-    background-color: var(--bg-card);
+    background-color: var(--bg-card-hover);
     border: var(--border-primary);
     border-radius: 5px;
     box-shadow: 0px 0px 60px 40px rgba(0, 0, 0, 0.6);
