@@ -15,6 +15,8 @@ interface GamePageProps {
 
 type Column = 'left' | 'right';
 
+type Tier = 'bronze' | 'silver' | 'gold';
+
 const SCROLL_DURATION = 90;
 
 const easeInOut = (t: number) =>
@@ -29,6 +31,20 @@ function formatarData(data: string | null): string {
     const [, ano, mes, dia, hora, minuto] = match;
     return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
 }
+
+function getTier(globalPercent: number | null | undefined): Tier {
+    const p = globalPercent ?? 100;
+
+    if (p <= 10) return 'gold';
+    if (p > 50) return 'bronze';
+    return 'silver';
+}
+
+const toTimestamp = (data: string | null): number => {
+    if (!data) return 0;
+    const time = Date.parse(data.replace(' ', 'T'));
+    return Number.isNaN(time) ? 0 : time;
+};
 
 const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }) => {
     const { getGameById, getAchievements } = useDb();
@@ -51,7 +67,9 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
         })();
     }, [gameId]);
 
-    const unlockedAchievements = achievements.filter((a) => a.unlocked).sort((a, b) => b.global_percent! - a.global_percent!);
+    const unlockedAchievements = achievements
+        .filter((a) => a.unlocked)
+        .sort((a, b) => toTimestamp(b.unlocked_at) - toTimestamp(a.unlocked_at));
     const lockedAchievements = achievements.filter((a) => !a.unlocked).sort((a, b) => b.global_percent! - a.global_percent!);
 
     const achievementsLabel = achievements.length
@@ -153,7 +171,7 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
 
         const step = (now: number) => {
             const progress = Math.min((now - startTime) / SCROLL_DURATION, 1);
-            container.scrollTop = start + (distance + 82) * easeInOut(progress);
+            container.scrollTop = start + (distance - 10) * easeInOut(progress);
 
             animationRef.current = progress < 1 ? requestAnimationFrame(step) : null;
         };
@@ -168,6 +186,7 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
     // ===== Render de cada item =====
     const renderItem = (achievement: Achievement, index: number, column: Column) => {
         const isFocused = activeColumn === column && indexes[column] === index;
+        const tier = getTier(achievement.global_percent);
 
         return (
             <div
@@ -180,7 +199,9 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                 key={achievement.id}
             >
                 <img
-                    className="game-achievement-page-icon"
+                    className={`game-achievement-page-icon ${
+                        achievement.unlocked ? `tier-${tier}` : ''
+                    }`}
                     src={achievement.unlocked ? achievement.icon! : achievement.icon_gray!}
                     alt={achievement.display_name ?? achievement.api_name}
                     title={achievement.display_name ?? achievement.api_name}
@@ -197,7 +218,13 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                         <div>
                             <p className="game-achievement-page-time">🕑 {formatarData(achievement.unlocked_at)}</p>
                         </div>
-                        <p className="game-achievement-page-global-percent">{achievement.global_percent}%</p>
+                        <p
+                            className={`game-achievement-page-global-percent ${
+                                `tier-${tier}`
+                            }`}
+                        >
+                            {achievement.global_percent}%
+                        </p>
                     </div>
                 </div>
             </div>
@@ -235,7 +262,15 @@ const GameAchievementPage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }
                         className="game-achievements-page"
                         ref={(el) => { containerRefs.current.right = el; }}
                     >
-                        {lockedAchievements.map((a, i) => renderItem(a, i, 'right'))}
+                        {achievements.length > 0 && lockedAchievements.length === 0 ? (
+                            <div className="platinum-message">
+                                <span className="platinum-icon">🏆</span>
+                                <p className="platinum-title">Platinado!</p>
+                                <p className="platinum-subtitle">Parabéns, trabalho feito.</p>
+                            </div>
+                        ) : (
+                            lockedAchievements.map((a, i) => renderItem(a, i, 'right'))
+                        )}
                     </div>
                 </div>
             </div>
