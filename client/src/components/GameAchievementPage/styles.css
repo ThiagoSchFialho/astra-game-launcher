@@ -54,11 +54,20 @@
     font-size: 20px;
 }
 
+.game-achievements-columns {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin: 0 2%;
+    height: calc(100vh - 270px);
+}
+
 .game-achievements-page {
+    flex: 1;
+    width: fit-content;
     overflow-y: auto;
-    max-height: calc(100vh - 80px);
-    margin: 0 20%;
-    padding-bottom: 150px;
+    height: 100%;
+    padding-bottom: 18px;
 }
 
 .game-achievements-page-container {
@@ -69,6 +78,7 @@
     background-color: var(--bg-card);
     border: var(--border-primary);
     border-radius: 10px;
+    height: 112px;
 }
 
 .game-achievements-page-container-focused {
@@ -81,28 +91,40 @@
     border-radius: 5px;
 }
 
-.game-achievement-page-name-time-container {
+.game-achievement-page-info-container {
     display: flex;
     justify-content: space-between;
-    width: 50%;
+    gap: 10px;
+    width: 100%;
 }
 
-.game-achievement-page-name-container {
+.game-achievement-page-name-description-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 10px;
 }
 
 .game-achievement-page-name {
     font-size: 20px;
 }
 
-.game-achievement-page-time {
-    letter-spacing: 0.2px;
+.game-achievement-page-description {
+
 }
 
-.game-achievement-page-description {
-    border-left: 1px solid var(--border);
-    padding: 0 10px;
-    max-width: 35%;
+.game-achievement-page-time-global-percent-container {
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.game-achievement-page-time {
+    letter-spacing: 0.4px;
+}
+
+.game-achievement-page-global-percent {
+    font-weight: 600;
+    font-size: 20px;
 }
