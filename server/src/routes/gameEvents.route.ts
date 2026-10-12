@@ -3,7 +3,7 @@ import { gameWatcher } from '../services/gameWatcher.service';
 
 const router = express.Router();
 
-router.get('/game-events', (req: Request, res: Response) => {
+router.get('/', (req: Request, res: Response) => {
     res.set({
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
