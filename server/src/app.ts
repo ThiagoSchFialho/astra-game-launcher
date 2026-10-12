@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { gameWatcher } from './services/gameWatcher.service';
 import usersRouter from './routes/users.route';
 import gamesRouter from './routes/games.route';
 import genresRouter from './routes/genres.route';
@@ -10,6 +11,7 @@ import collectionGamesRouter from './routes/collectionGames.route';
 import steamApiRouter from './routes/steamApi.route';
 import systemRouter from "./routes/system.route";
 import achievementsRouter from "./routes/achievements.route";
+import gameEvents from "./routes/gameEvents.route";
 
 dotenv.config();
 const app = express();
@@ -31,6 +33,7 @@ app.use('/collection-games', collectionGamesRouter);
 app.use('/steam-api', steamApiRouter);
 app.use("/system", systemRouter);
 app.use("/achievements", achievementsRouter);
+app.use("/game-events", gameEvents);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'API rodando!' });
@@ -38,4 +41,5 @@ app.get('/', (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  gameWatcher.start();
 });
