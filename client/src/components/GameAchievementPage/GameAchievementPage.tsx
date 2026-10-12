@@ -47,7 +47,7 @@ function formatarData(data: string | null): string {
 function getTier(globalPercent: number | null | undefined): Tier {
     const p = globalPercent ?? 100;
 
-    if (p <= 10) return 'gold';
+    if (p <= 15) return 'gold';
     if (p > 50) return 'bronze';
     return 'silver';
 }

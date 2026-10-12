@@ -15,6 +15,9 @@ import totalTime from '../../assets/icons/total-time.svg';
 import trophy from '../../assets/icons/trophy.svg';
 import checked from '../../assets/icons/checked.svg';
 import notChecked from '../../assets/icons/not-checked.svg';
+import goldenTrophy from '../../assets/golden_trophy.png';
+import silverTrophy from '../../assets/silver_trophy.png';
+import bronzeTrophy from '../../assets/bronze_trophy.png';
 
 import type { Game } from '../../types/gamesType';
 import { useSound } from '../../hooks/useSound';
@@ -24,6 +27,26 @@ interface ScreenItems {
     label: string
     type: string
     action: () => void | Promise<void>
+}
+
+type Tier = 'bronze' | 'silver' | 'gold';
+
+const getTier = (globalPercent: number | null | undefined): Tier => {
+    const p = globalPercent ?? 100;
+
+    if (p <= 15) return 'gold';
+    if (p > 50) return 'bronze';
+    return 'silver';
+}
+
+const getTrophySrc = (tier: string) => {
+    if (tier === 'bronze') {
+        return bronzeTrophy;
+    } else if (tier === 'silver') {
+        return silverTrophy;
+    } else {
+        return goldenTrophy;
+    }
 }
 
 const statusConfig = {
@@ -292,11 +315,12 @@ const GamePage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }) => {
                                         <div className="game-page-achievements-icon-container">
                                             <img
                                                 key={achievement.id}
-                                                className="game-page-achievement-icon"
+                                                className={`game-page-achievement-icon ${getTier(achievement.global_percent)}`}
                                                 src={achievement.icon!}
                                                 alt={achievement.display_name ?? achievement.api_name}
                                                 title={achievement.display_name ?? achievement.api_name}
                                             />
+                                            <img className="achievement-tier-trophy" src={getTrophySrc(getTier(achievement.global_percent))} />
                                             <p className="game-page-achievement-label">{achievement.display_name}</p>
                                         </div>
                                     ))}
