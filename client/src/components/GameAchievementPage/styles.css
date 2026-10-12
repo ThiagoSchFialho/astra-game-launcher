@@ -116,10 +116,6 @@
 .tier-silver { --tier-color: rgb(230, 230, 230); }
 .tier-bronze { --tier-color: rgb(205, 127, 50); }
 
-.game-achievement-page-icon[class*="tier-"] {
-    box-shadow: 0 0 8px 4px var(--tier-color);
-}
-
 .game-achievement-page-global-percent[class*="tier-"] {
     color: var(--tier-color);
 }

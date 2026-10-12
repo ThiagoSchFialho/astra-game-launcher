@@ -6,10 +6,13 @@ const RunningGameContext = createContext<number | null>(null);
 
 export const RunningGameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [runningSteamId, setRunningSteamId] = useState<number | null>(null);
-    const { syncAchievementsBySteamId } = useDb();
+    const { syncAchievementsBySteamId, syncPlaytime } = useDb();
 
-    const syncRef = useRef(syncAchievementsBySteamId);
-    syncRef.current = syncAchievementsBySteamId;
+    const syncAchievementRef = useRef(syncAchievementsBySteamId);
+    syncAchievementRef.current = syncAchievementsBySteamId;
+
+    const syncPlayTimeRef = useRef(syncPlaytime);
+    syncPlayTimeRef.current = syncPlaytime;
 
     useEffect(() => {
         const es = new EventSource(`${import.meta.env.VITE_BACKEND_HOST}/game-events`);
@@ -20,8 +23,8 @@ export const RunningGameProvider: React.FC<{ children: React.ReactNode }> = ({ c
             if (event.type === 'started') {
                 setRunningSteamId(event.steamId);
             } else {
-                setRunningSteamId(null);
-                syncRef.current(String(event.steamId));
+                syncAchievementRef.current(String(event.steamId));
+                syncPlayTimeRef.current();
             }
         };
 
