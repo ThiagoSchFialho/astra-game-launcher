@@ -18,7 +18,6 @@ import notChecked from '../../assets/icons/not-checked.svg';
 
 import type { Game } from '../../types/gamesType';
 import { useSound } from '../../hooks/useSound';
-import { useNavigate } from 'react-router-dom';
 import type { Achievement } from '../../types/achievementType';
 
 interface ScreenItems {
@@ -53,14 +52,12 @@ interface GamePageProps {
 }
 
 const GamePage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }) => {
-    const navigation = useNavigate();
     const { getGameById, getAchievements, handleStartGame, updateHidden, updateBeatable } = useDb();
     const { playCursorSound, playConfirmSound } = useSound();
     const [currentGame, setCurrentGame] = useState<Game>();
     const currentStatus = statusConfig[currentGame?.status ?? 'not-played'];
     const [selectedIndex, setSelectedIndex] = useState(BANNER_INDEX);
     const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
     const [achievements, setAchievements] = useState<Achievement[]>([]);
 
     const getGame = async () => {
@@ -178,11 +175,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }) => {
                     playCursorSound();
                     setSelectedIndex(0);
                 } else if (command === 'A' && currentGame) {
-                    setIsPlaying(true);
                     handleStartGame(currentGame.id, currentGame.steam_id);
-                    setTimeout(() => {
-                        setIsPlaying(false);
-                    }, 50000);
                 }
                 return;
             }
@@ -220,7 +213,6 @@ const GamePage: React.FC<GamePageProps> = ({ gameId, onExitGamePage }) => {
                             img={getGameCover(currentGame.title, 'landscape', 'jpg')}
                             name={currentGame.title}
                             isFocused={selectedIndex === 999}
-                            isPlaying={isPlaying}
                             isInstalled={currentGame.installed}
                         />
 
