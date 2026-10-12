@@ -253,6 +253,23 @@ export const useDb = () => {
         }
     }
 
+    const syncAchievementsBySteamId = async (steamId: string) => {
+        try {
+            const response = await fetch (`${host}/steam-api/sync-achievements-from-steam/:${steamId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Erro ao sincronizar conquistas do jogo.", data.error);
+                return null;
+            }
+
+            return data;
+
+        } catch (error) {
+            console.error("Erro ao sincronizar conquistas do jogo.", error);
+        }
+    }
+
     return {
         handleStartGame,
         getGameById,
@@ -266,6 +283,7 @@ export const useDb = () => {
         syncRtimeLastPlayed,
         getAchievements,
         getAchievementsProgress,
-        syncAchievements
+        syncAchievements,
+        syncAchievementsBySteamId
     };
 }
