@@ -310,6 +310,50 @@ router.get('/sync-rtime-last-played-from-steam', (req: Request, res: Response) =
     handleAttributeSync(req, res, 'rtime_last_played')
 );
 
+async function syncGameAchievements(
+    gameId: number,
+    steamId: number,
+    user: NonNullable<Awaited<ReturnType<typeof userModel.getUser>>>
+) {
+    const hasSchema = await achievementsModel.hasSchema(gameId);
+
+    if (!hasSchema) {
+        const schema = await fetchAchievementSchema(steamId, user.steam_api_key);
+
+        if (schema?.length) {
+            await achievementsModel.upsertSchema(gameId, schema.map((a) => ({
+                api_name: a.name,
+                display_name: a.displayName ?? null,
+                description: a.description ?? null,
+                icon: a.icon ?? null,
+                icon_gray: a.icongray ?? null,
+            })));
+        }
+    }
+
+    if (await achievementsModel.needsGlobalPercent(gameId)) {
+        const percentages = await fetchGlobalPercentages(steamId);
+
+        const entries = (percentages ?? [])
+            .map((p) => ({ api_name: p.name, global_percent: Number(p.percent) }))
+            .filter((e) => Number.isFinite(e.global_percent));
+
+        if (entries.length) {
+            await achievementsModel.bulkUpdateGlobalPercent(gameId, entries);
+        }
+    }
+
+    const playerAchievements = await fetchPlayerAchievements(steamId, user);
+
+    if (playerAchievements?.length) {
+        await achievementsModel.bulkUpdateUnlocked(gameId, playerAchievements.map((a) => ({
+            api_name: a.apiname,
+            unlocked: a.achieved === 1,
+            unlocked_at: a.unlocktime > 0 ? a.unlocktime : null,
+        })));
+    }
+}
+
 router.get('/sync-achievements-from-steam', async (req: Request, res: Response) => {
     try {
         const user = await userModel.getUser();
@@ -332,44 +376,7 @@ router.get('/sync-achievements-from-steam', async (req: Request, res: Response) 
             const batchResults = await Promise.all(
                 batch.map(async ({ id, steam_id }) => {
                     try {
-                        const hasSchema = await achievementsModel.hasSchema(id);
- 
-                        if (!hasSchema) {
-                            const schema = await fetchAchievementSchema(steam_id, user.steam_api_key);
- 
-                            if (schema?.length) {
-                                await achievementsModel.upsertSchema(id, schema.map((a) => ({
-                                    api_name: a.name,
-                                    display_name: a.displayName ?? null,
-                                    description: a.description ?? null,
-                                    icon: a.icon ?? null,
-                                    icon_gray: a.icongray ?? null,
-                                })));
-                            }
-                        }
-
-                        if (await achievementsModel.needsGlobalPercent(id)) {
-                            const percentages = await fetchGlobalPercentages(steam_id);
- 
-                            const entries = (percentages ?? [])
-                                .map((p) => ({ api_name: p.name, global_percent: Number(p.percent) }))
-                                .filter((e) => Number.isFinite(e.global_percent));
- 
-                            if (entries.length) {
-                                await achievementsModel.bulkUpdateGlobalPercent(id, entries);
-                            }
-                        }
- 
-                        const playerAchievements = await fetchPlayerAchievements(steam_id, user);
- 
-                        if (playerAchievements?.length) {
-                            await achievementsModel.bulkUpdateUnlocked(id, playerAchievements.map((a) => ({
-                                api_name: a.apiname,
-                                unlocked: a.achieved === 1,
-                                unlocked_at: a.unlocktime > 0 ? a.unlocktime : null,
-                            })));
-                        }
- 
+                        await syncGameAchievements(id, steam_id, user);
                         return { steam_id, status: 'synced' as const };
                     } catch (error: any) {
                         console.error(`Erro ao sincronizar conquistas de ${steam_id}:`, error);
@@ -387,6 +394,44 @@ router.get('/sync-achievements-from-steam', async (req: Request, res: Response) 
  
         const hasErrors = results.some((r) => r.status === 'error');
         return res.status(hasErrors ? 207 : 200).json(results);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+});
+
+router.get('/sync-achievements-from-steam/:steamId', async (req: Request, res: Response) => {
+    try {
+        const steamId = Number(req.params.steamId);
+
+        if (!Number.isInteger(steamId) || steamId <= 0) {
+            return res.status(400).json({ error: "steamId inválido." });
+        }
+
+        const user = await userModel.getUser();
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado." });
+        }
+
+        const trackedGames = await gamesModel.getGameIdsBySteamId();
+        const game = trackedGames.find((g: any) => Number(g.steam_id) === steamId);
+
+        if (!game) {
+            return res.status(404).json({ error: "Jogo não encontrado na sua biblioteca." });
+        }
+
+        try {
+            await syncGameAchievements(game.id, steamId, user);
+            return res.status(200).json({ steam_id: steamId, status: 'synced' });
+        } catch (error: any) {
+            console.error(`Erro ao sincronizar conquistas de ${steamId}:`, error);
+            return res.status(502).json({
+                steam_id: steamId,
+                status: 'error',
+                error: error?.message ?? 'Erro desconhecido',
+            });
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Erro interno do servidor." });
