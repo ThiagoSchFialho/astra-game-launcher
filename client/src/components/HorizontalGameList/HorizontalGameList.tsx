@@ -3,7 +3,6 @@ import './styles.css';
 
 import GameCardPortrait from '../GameCardPortrait/GameCardPortrait';
 import JoystickSetup from '../JoystickSetup/JoystickSetup';
-import GamePage from '../GamePage/GamePage';
 
 import { useSound } from '../../hooks/useSound';
 
@@ -13,6 +12,7 @@ import type { Game } from '../../types/gamesType';
 
 import goldenTrophy from '../../assets/golden_trophy.png';
 import clock from '../../assets/icons/clock.svg';
+import { useNavigate } from 'react-router-dom';
 
 type ScreenItem = {
     id: Game['id'];
@@ -27,31 +27,19 @@ type ScreenItem = {
 
 interface HorizontalGameListProps {
     list: Game[];
-    onReloadList: () => void;
-    page?: string;
-    onBack?: () => void;
+    selectedGame: string;
 }
 
-const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
-    list,
-    onReloadList,
-    page,
-    onBack,
-}) => {
+const HorizontalGameList: React.FC<HorizontalGameListProps> = ({ list, selectedGame }) => {
+    const navigation = useNavigate();
     const { playSelectSound, playConfirmSound, playPopupSound } = useSound();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const [commandCoolDown, setCommandCoolDown] = useState<boolean>(false);
-    const [isOnGamePage, setIsOnGamePage] = useState<boolean>(false);
-    const [selectedGameId, setSelectedGameId] = useState<Game['id'] | undefined>(undefined);
     const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState<boolean>(false);
 
-    useEffect(() => {
-        const selectedIndexAux = selectedIndex;
-
-        onReloadList();
-        setSelectedIndex(selectedIndexAux);
-    }, [isOnGamePage]);
+    const initialSelectDoneRef = useRef<boolean>(false);
+    const instantScrollRef = useRef<boolean>(false);
 
     const gameCardsItems: ScreenItem[] = list.map((game) => ({
         id: game.id,
@@ -61,8 +49,30 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
         name: game.title,
         playtime: game.playtime,
         installed: game.installed,
-        action: () => { setSelectedGameId(game.id); setIsOnGamePage(true); },
+        action: () => { navigation(`/game-page/home/${game.id}`) }
     }));
+
+    useEffect(() => {
+        if (initialSelectDoneRef.current) return;
+        if (!selectedGame || gameCardsItems.length === 0) return;
+
+        initialSelectDoneRef.current = true;
+
+        const index = gameCardsItems.findIndex((game) => game.id == selectedGame);
+        if (index === -1) return;
+
+        if (index !== selectedIndex) {
+            instantScrollRef.current = true;
+            setSelectedIndex(index);
+        }
+    }, [selectedGame, gameCardsItems.length]);
+
+    useEffect(() => {
+        if (selectedGame) {
+            const index = gameCardsItems.findIndex(game => game.id == selectedGame);
+            setSelectedIndex(index);
+        }
+    }, [selectedGame, gameCardsItems.length]);
 
     const selectedIndexRef = useRef(selectedIndex);
     useEffect(() => {
@@ -103,9 +113,6 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
             if (commandCoolDown) return;
             playConfirmSound();
             gameCardsItems[currentIndex]?.action();
-        } else if (command === 'B') {
-            if (commandCoolDown) return;
-            onBack?.();
         } else if (command === 'Y') {
             playPopupSound();
             setIsMenuOpen(true);
@@ -114,15 +121,6 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
 
     const handleCloseMenu = () => {
         setCommandCoolDown(true);
-        setTimeout(() => {
-            setCommandCoolDown(false);
-        }, 50);
-        setIsMenuOpen(false);
-    };
-
-    const handleCloseGamePage = () => {
-        setCommandCoolDown(true);
-        setIsOnGamePage(false);
         setTimeout(() => {
             setCommandCoolDown(false);
         }, 50);
@@ -147,6 +145,16 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
         const elLeftInContainer = elRect.left - containerRect.left + container.scrollLeft;
         const target =
             elLeftInContainer - container.clientWidth / 2 + elRect.width / 2;
+
+        if (instantScrollRef.current) {
+            instantScrollRef.current = false;
+            if (animationRef.current !== null) {
+                cancelAnimationFrame(animationRef.current);
+                animationRef.current = null;
+            }
+            container.scrollLeft = target;
+            return;
+        }
 
         const start = container.scrollLeft;
         const distance = target - start;
@@ -178,15 +186,11 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
 
     return (
         <>
-            {isOnGamePage && selectedGameId !== undefined && (
-                <GamePage gameId={selectedGameId} onExitGamePage={handleCloseGamePage} />
-            )}
-
-            {!isMenuOpen && !isOnGamePage && (
+            {!isMenuOpen && (
                 <JoystickSetup command={joystickNavigation} />
             )}
 
-            <div className="main-content" style={{ display: isOnGamePage ? 'none' : undefined }}>
+            <div className="main-content">
                 <div className="horizontal-game-list-container">
                     <div className="horizontal-list-game-container" ref={scrollContainerRef}>
                         {gameCardsItems.length === 0 ? (
@@ -198,14 +202,12 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({
                                 <div
                                     key={item.id}
                                     ref={(el) => { itemRefs.current[index] = el; }}
-                                    onClick={() => { setSelectedGameId(item.id); setIsOnGamePage(true); }}
                                 >
                                     <GameCardPortrait
                                         id={item.id}
                                         steamId={item.steamId}
                                         img={item.img}
                                         name={item.name}
-                                        page={page ?? ''}
                                         playtime={item.playtime}
                                         isFocused={selectedIndex === index}
                                         isOpen={isMenuOpen && selectedIndex === index}

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import GameList from '../../components/GameList/GameList';
 import { useDb } from '../../hooks/useDb';
 import type { Game } from '../../types/gamesType';
+import { useParams } from 'react-router-dom';
 
 
 const Library: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
     const { fetchGames } = useDb();
     const [gamesList, setGamesList] = useState<Game[]>([]);
 
@@ -20,7 +22,7 @@ const Library: React.FC = () => {
 
     return (
         <>
-            <GameList list={gamesList} onReloadList={getGames} page='Biblioteca' />
+            <GameList list={gamesList} selectedGame={id ?? ''} />
         </>
     )
 }

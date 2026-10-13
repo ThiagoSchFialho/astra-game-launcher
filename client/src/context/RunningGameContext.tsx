@@ -17,14 +17,25 @@ export const RunningGameProvider: React.FC<{ children: React.ReactNode }> = ({ c
     useEffect(() => {
         const es = new EventSource(`${import.meta.env.VITE_BACKEND_HOST}/game-events`);
 
-        es.onmessage = (e) => {
+        es.onmessage = async (e) => {
             const event: GameEvent = JSON.parse(e.data);
 
             if (event.type === 'started') {
                 setRunningSteamId(event.steamId);
-            } else {
-                syncAchievementRef.current(String(event.steamId));
-                syncPlayTimeRef.current();
+                return;
+            }
+
+            setRunningSteamId(null);
+
+            try {
+                await Promise.all([
+                    syncAchievementRef.current(String(event.steamId)),
+                    syncPlayTimeRef.current(),
+                ]);
+            } catch (err) {
+                console.error('Erro ao sincronizar:', err);
+            } finally {
+                window.location.reload();
             }
         };
 

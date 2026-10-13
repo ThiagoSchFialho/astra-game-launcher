@@ -1,0 +1,132 @@
+.background {
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0d121b;
+    background-color: #0d121bbd;
+}
+
+.error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+.game-page-container {
+    padding-top: 40px;
+}
+
+.game-page-title {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    transform: translateX(10px);
+}
+
+.game-page-details-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.game-page-details-section {
+    padding: 15px 30px 5px 30px;
+    border-left: var(--border-primary);
+}
+
+.game-page-details-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px; 
+}
+
+.game-page-details-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 15px;
+    background-color: var(--bg-card);
+    border: var(--border-primary);
+    border-radius: 10px;
+}
+
+.game-page-details-item div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.game-page-details-item img {
+    width: 30px;
+}
+
+.game-page-details-item .title {
+    color: var(--text-secondary);
+}
+
+.game-page-options-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "button1 button1"
+        "button2 button2"
+        "attr1 attr2";
+    gap: 10px;
+    width: 300px;
+}
+.options-item-focused {
+    background-color: var(--bg-card-secondary);
+    border: 1px solid var(--primary);
+}
+
+.game-page-statistics-container {
+    display: grid;
+    gap: 10px;
+    width: 370px;
+}
+
+.game-page-achievements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 45px;
+    padding-top: 20px;
+    padding-left: 40px;
+    margin-right: -20px;
+    height: calc(100% - 40px);
+}
+
+.game-page-achievements-icon-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game-page-achievement-icon {
+    width: 130px;
+    height: 130px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.achievement-tier-trophy {
+    position: absolute;
+    right: -20px;
+    bottom: 35px;
+    width: 45px;
+    filter: drop-shadow(0 0 5px rgb(0, 0, 0));
+}
+
+.game-page-achievement-label {
+    max-width: 130px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}

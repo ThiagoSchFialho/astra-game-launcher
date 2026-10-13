@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import './styles.css';
 
 import JoystickSetup from '../JoystickSetup/JoystickSetup';
-import GamePage from '../GamePage/GamePage';
 
 import { useSound } from '../../hooks/useSound';
 
@@ -10,6 +9,7 @@ import { getGameCover } from '../../utils/getGameCover';
 
 import type { Game } from '../../types/gamesType';
 import GameCard from '../GameCard/GameCard';
+import { useNavigate } from 'react-router-dom';
 
 type ScreenItem = {
     id: Game['id'];
@@ -23,9 +23,7 @@ type ScreenItem = {
 
 interface GameListProps {
     list: Game[];
-    onReloadList: () => void;
-    page?: string;
-    onBack?: () => void;
+    selectedGame: string;
     showHeader?: boolean;
 }
 
@@ -60,17 +58,14 @@ const COLUMNS = 5;
 
 const GameList: React.FC<GameListProps> = ({
     list,
-    onReloadList,
-    page,
-    onBack,
+    selectedGame,
     showHeader = true,
 }) => {
+    const navigation = useNavigate();
     const { playSelectSound, playConfirmSound, playPopupSound } = useSound();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const [commandCoolDown, setCommandCoolDown] = useState<boolean>(false);
-    const [isOnGamePage, setIsOnGamePage] = useState<boolean>(false);
-    const [selectedGameId, setSelectedGameId] = useState<Game['id'] | undefined>(undefined);
     const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState<boolean>(false);
 
     const [isOnPageHeader, setIsOnPageHeader] = useState<boolean>(false);
@@ -80,12 +75,8 @@ const GameList: React.FC<GameListProps> = ({
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [selectedOrder, setSelectedOrder] = useState<string>('name_asc');
 
-    useEffect(() => {
-        const selectedIndexAux = selectedIndex;
-
-        onReloadList();
-        setSelectedIndex(selectedIndexAux);
-    }, [isOnGamePage]);
+    const initialSelectDoneRef = useRef<boolean>(false);
+    const instantScrollRef = useRef<boolean>(false);
 
     const visibleList = useMemo(() => {
         const activeTests = FILTER_OPTIONS
@@ -110,8 +101,23 @@ const GameList: React.FC<GameListProps> = ({
         name: game.title,
         playtime: game.playtime,
         installed: game.installed,
-        action: () => { setSelectedGameId(game.id); setIsOnGamePage(true); },
+        action: () => { navigation(`/game-page/library/${game.id}`) }
     }));
+
+    useEffect(() => {
+        if (initialSelectDoneRef.current) return;
+        if (!selectedGame || gameCardsItems.length === 0) return;
+
+        initialSelectDoneRef.current = true;
+
+        const index = gameCardsItems.findIndex((game) => game.id == selectedGame);
+        if (index === -1) return;
+
+        if (index !== selectedIndex) {
+            instantScrollRef.current = true;
+            setSelectedIndex(index);
+        }
+    }, [selectedGame, gameCardsItems.length]);
 
     useEffect(() => {
         if (gameCardsItems.length > 0 && selectedIndex > gameCardsItems.length - 1) {
@@ -239,9 +245,6 @@ const GameList: React.FC<GameListProps> = ({
             if (commandCoolDown) return;
             playConfirmSound();
             gameCardsItems[currentIndex]?.action();
-        } else if (command === 'B') {
-            if (commandCoolDown) return;
-            onBack?.();
         } else if (command === 'Y') {
             playPopupSound();
             setIsMenuOpen(true);
@@ -252,15 +255,6 @@ const GameList: React.FC<GameListProps> = ({
 
     const handleCloseMenu = () => {
         setCommandCoolDown(true);
-        setTimeout(() => {
-            setCommandCoolDown(false);
-        }, 50);
-        setIsMenuOpen(false);
-    };
-
-    const handleCloseGamePage = () => {
-        setCommandCoolDown(true);
-        setIsOnGamePage(false);
         setTimeout(() => {
             setCommandCoolDown(false);
         }, 50);
@@ -285,6 +279,16 @@ const GameList: React.FC<GameListProps> = ({
         const elTopInContainer = elRect.top - containerRect.top + container.scrollTop;
         const target =
             elTopInContainer - container.clientHeight / 2 + elRect.height / 2;
+
+        if (instantScrollRef.current) {
+            instantScrollRef.current = false;
+            if (animationRef.current !== null) {
+                cancelAnimationFrame(animationRef.current);
+                animationRef.current = null;
+            }
+            container.scrollTop = target;
+            return;
+        }
 
         const start = container.scrollTop;
         const distance = target - start;
@@ -318,15 +322,11 @@ const GameList: React.FC<GameListProps> = ({
 
     return (
         <>
-            {isOnGamePage && selectedGameId !== undefined && (
-                <GamePage gameId={selectedGameId} onExitGamePage={handleCloseGamePage} />
-            )}
-
-            {!isMenuOpen && !isOnGamePage && (
+            {!isMenuOpen && (
                 <JoystickSetup command={(c: string) => joystickRef.current(c)} />
             )}
 
-            <div className="main-content" style={{ display: isOnGamePage ? 'none' : undefined }}>
+            <div className="main-content">
 
                 {showHeader && (
                     <div className="page-header">
@@ -380,14 +380,12 @@ const GameList: React.FC<GameListProps> = ({
                                 <div
                                     key={item.id}
                                     ref={(el) => { itemRefs.current[index] = el; }}
-                                    onClick={() => { setSelectedGameId(item.id); setIsOnGamePage(true); }}
                                 >
                                     <GameCard
                                         id={item.id}
                                         steamId={item.steamId}
                                         img={item.img}
                                         name={item.name}
-                                        page={page ?? ''}
                                         playtime={item.playtime}
                                         isFocused={!isOnPageHeader && !openPanel && selectedIndex === index}
                                         isOpen={isMenuOpen && selectedIndex === index}

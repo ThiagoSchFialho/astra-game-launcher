@@ -98,7 +98,7 @@ const Header: React.FC = () => {
 
     const topMenuItems: TopMenuItems[] = [
         {
-            url: '/',
+            url: '/home',
             name: 'home',
             icon: home,
             iconSelected: homeSelected,

@@ -4,9 +4,11 @@ import { useSystem } from '../../hooks/useSystem';
 import type { Game } from '../../types/gamesType';
 import { orderBy } from '../../utils/orderBy';
 import HorizontalGameList from '../../components/HorizontalGameList/HorizontalGameList';
+import { useParams } from 'react-router-dom';
 
 
 const Home: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
     const { fetchGames } = useDb();
     const { fetchInstalledGames } = useSystem();
     const [gamesList, setGamesList] = useState<Game[]>([]);
@@ -34,7 +36,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <HorizontalGameList list={gamesList} onReloadList={getGames} page='Início' />
+            <HorizontalGameList list={gamesList} selectedGame={id ?? ''} />
         </>
     )
 }
