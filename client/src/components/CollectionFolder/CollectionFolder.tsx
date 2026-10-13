@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import './styles.css';
 import { getGameCover } from '../../utils/getGameCover';
 
@@ -30,13 +29,10 @@ interface ColelctionFolderProps {
 }
 
 const CollectionFolder: React.FC<ColelctionFolderProps> = ({ collection, isFocused }) => {
-    const navigation = useNavigate();
-
     return (
         <>  
             <div className="collection-folder-container">
                 <div
-                    onClick={() => navigation(`/collection/${collection.id}`)}
                     className={isFocused ? "collection-folder focused" : "collection-folder"}
                 >
                     {collection.games.slice(0, 4).map(game => (

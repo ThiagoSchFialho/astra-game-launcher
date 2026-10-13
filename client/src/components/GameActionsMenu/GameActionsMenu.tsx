@@ -237,7 +237,6 @@ const GameActionsMenu: React.FC<GameActionsMenuProps> = ({ gameId, gameSteamId, 
                         <li
                             key={option.id}
                             className={subSelectedIndex === index ? "game-actions-menu-focused" : ""}
-                            onClick={option.onSelect}
                         >
                             {option.label}
                         </li>

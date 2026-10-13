@@ -181,7 +181,6 @@ const Collections: React.FC = () => {
                 <div ref={scrollContainerRef} className="collections-scroll-container">
                     <div className="collections-header">
                         <div
-                            onClick={() => setIsCollectionFormOpen(true)}
                             className={selectedIndex === BUTTON_INDEX ? 'focused create-collection-btn' : 'create-collection-btn'}
                         >
                             <img src={plus} />

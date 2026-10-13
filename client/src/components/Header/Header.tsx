@@ -131,11 +131,18 @@ const Header: React.FC = () => {
         }
     ];
 
-     const selected = topMenuItems.find(item =>
-        item.url === '/' 
-            ? location.pathname === '/' 
-            : location.pathname.startsWith(item.url)
+    
+    const selected = topMenuItems.find(item =>
+        location.pathname === item.url ||
+        location.pathname.startsWith(`${item.url}/`) ||
+        (item.name === 'collections' &&
+            location.pathname.startsWith('/collection/')) ||
+        (location.pathname.startsWith('/game-page/home/') &&
+            item.name === 'home') ||
+        (location.pathname.startsWith('/game-page/library/') &&
+            item.name === 'library')
     )?.name ?? '';
+
 
     const joystickNavigation = (command: string) => {
         if (command === 'START') {
@@ -183,7 +190,6 @@ const Header: React.FC = () => {
             <JoystickSetup command={joystickNavigation} />
             <div className="header">
                 <div className="logo-container">
-                    {/* <img onClick={() => setIsHeaderMenuOpen(true)} className="logo" src={logo} alt="game backlog manager logo" /> */}
                     {isSynchronizing && (
                         <div
                             className="sync-steam-btn-container"
@@ -203,7 +209,7 @@ const Header: React.FC = () => {
                 <div className="pages-section">
                     <ul className="top-menu-list">
                         {topMenuItems.map(item => (
-                            <li key={item.name} onClick={() => navigation(item.url)} className={selected === item.name ? 'selected' : ''}>
+                            <li key={item.name} className={selected === item.name ? "selected" : ""}>
                                 <img src={selected == item.name ? item.iconSelected : item.icon} alt={item.alt} />
                                 <p>{item.label}</p>
                             </li>
@@ -223,13 +229,11 @@ const Header: React.FC = () => {
                                     <hr />
                                     <li
                                         className={selectedMenuIndex === index ? "selected-header-menu-item header-menu-item" : "header-menu-item" }
-                                        onClick={item.action}
                                     >{item.label}</li>
                                 </>
                             )} else { return (
                                 <li
                                     className={selectedMenuIndex === index ? "selected-header-menu-item header-menu-item" : "header-menu-item" }
-                                    onClick={item.action}
                                 >{item.label}</li>
                             )}
                         })}
