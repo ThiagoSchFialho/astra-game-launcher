@@ -140,7 +140,10 @@ const Header: React.FC = () => {
         (location.pathname.startsWith('/game-page/home/') &&
             item.name === 'home') ||
         (location.pathname.startsWith('/game-page/library/') &&
-            item.name === 'library')
+            item.name === 'library') ||
+        (location.pathname.startsWith('/game-page/collection/') &&
+            item.name === 'collections')
+            
     )?.name ?? '';
 
 

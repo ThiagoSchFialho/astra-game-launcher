@@ -71,7 +71,7 @@ const NAVIGATION_MAP: Record<number, Partial<Record<string, number>>> = {
 };
 
 const GamePage: React.FC = () => {
-    const { id, page } = useParams<{ id: string, page: string }>();
+    const { id, collectionId, page } = useParams<{ id: string, collectionId: string, page: string }>();
     const navigation = useNavigate();
     const { getGameById, getAchievements, handleStartGame, updateHidden, updateBeatable } = useDb();
     const { playCursorSound, playConfirmSound } = useSound();
@@ -187,7 +187,11 @@ const GamePage: React.FC = () => {
         }
         if (!isHeaderMenuOpen) {
             if (command === 'B') {
-                navigation(`/${page}/${id}`);
+                if (page === 'collection') {
+                    navigation(`/${page}/${collectionId}/${id}`);
+                } else {
+                    navigation(`/${page}/${id}`);
+                }
                 return;
             }
 

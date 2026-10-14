@@ -49,7 +49,7 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({ list, selectedG
         name: game.title,
         playtime: game.playtime,
         installed: game.installed,
-        action: () => { navigation(`/game-page/home/${game.id}`) }
+        action: () => { playConfirmSound(); navigation(`/game-page/home/${game.id}`) }
     }));
 
     useEffect(() => {
@@ -111,7 +111,6 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({ list, selectedG
             }
         } else if (command === 'A') {
             if (commandCoolDown) return;
-            playConfirmSound();
             gameCardsItems[currentIndex]?.action();
         } else if (command === 'Y') {
             playPopupSound();

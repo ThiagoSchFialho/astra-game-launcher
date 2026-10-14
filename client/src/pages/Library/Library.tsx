@@ -22,7 +22,7 @@ const Library: React.FC = () => {
 
     return (
         <>
-            <GameList list={gamesList} selectedGame={id ?? ''} />
+            <GameList list={gamesList} page='library' selectedGame={id ?? ''} />
         </>
     )
 }

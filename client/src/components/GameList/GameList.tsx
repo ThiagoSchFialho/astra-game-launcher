@@ -23,7 +23,9 @@ type ScreenItem = {
 
 interface GameListProps {
     list: Game[];
-    selectedGame: string;
+    page: string;
+    collectionId?: string;
+    selectedGame?: string;
     showHeader?: boolean;
 }
 
@@ -58,6 +60,8 @@ const COLUMNS = 5;
 
 const GameList: React.FC<GameListProps> = ({
     list,
+    page,
+    collectionId,
     selectedGame,
     showHeader = true,
 }) => {
@@ -77,6 +81,15 @@ const GameList: React.FC<GameListProps> = ({
 
     const initialSelectDoneRef = useRef<boolean>(false);
     const instantScrollRef = useRef<boolean>(false);
+
+    useEffect(() => {
+        if (page === 'collection') {
+            setCommandCoolDown(true);
+            setTimeout(() => {
+                setCommandCoolDown(false);
+            }, 100);
+        }
+    }, []);
 
     const visibleList = useMemo(() => {
         const activeTests = FILTER_OPTIONS
@@ -101,7 +114,7 @@ const GameList: React.FC<GameListProps> = ({
         name: game.title,
         playtime: game.playtime,
         installed: game.installed,
-        action: () => { navigation(`/game-page/library/${game.id}`) }
+        action: () => { page === "collection" ? navigation(`/game-page/${page}/${collectionId}/${game.id}`) : navigation(`/game-page/${page}/${game.id}`) }
     }));
 
     useEffect(() => {
@@ -245,6 +258,11 @@ const GameList: React.FC<GameListProps> = ({
             if (commandCoolDown) return;
             playConfirmSound();
             gameCardsItems[currentIndex]?.action();
+        } else if (command=== 'B') {
+            if (commandCoolDown) return;
+            if (page === 'collection') {
+                navigation('/collections');
+            }
         } else if (command === 'Y') {
             playPopupSound();
             setIsMenuOpen(true);
