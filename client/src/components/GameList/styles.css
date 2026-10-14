@@ -140,7 +140,6 @@
 }
 
 .game-card-container {
-    position: relative;
     height: 278px;
     width: 278px;
     background-color: rgba(255, 255, 255, 0.15);

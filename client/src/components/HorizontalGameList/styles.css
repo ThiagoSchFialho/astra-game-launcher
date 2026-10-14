@@ -56,3 +56,10 @@
 .trophy-icon {
     width: 21px;
 }
+
+.game-card-portrait-container {
+    height: 600px;
+    width: 9px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}

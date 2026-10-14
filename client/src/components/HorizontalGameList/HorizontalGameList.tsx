@@ -202,6 +202,7 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({ list, selectedG
                                 <div
                                     key={item.id}
                                     ref={(el) => { itemRefs.current[index] = el; }}
+                                    className="game-card-portrait-container"
                                 >
                                     <GameCardPortrait
                                         id={item.id}
