@@ -380,6 +380,7 @@ const GameList: React.FC<GameListProps> = ({
                                 <div
                                     key={item.id}
                                     ref={(el) => { itemRefs.current[index] = el; }}
+                                    className="game-card-container"
                                 >
                                     <GameCard
                                         id={item.id}

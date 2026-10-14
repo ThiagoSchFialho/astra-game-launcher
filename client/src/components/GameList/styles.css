@@ -138,3 +138,12 @@
     font-size: 16px;
     font-weight: 400;
 }
+
+.game-card-container {
+    position: relative;
+    height: 278px;
+    width: 278px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
