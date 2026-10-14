@@ -106,20 +106,20 @@ const Header: React.FC = () => {
             alt: 'casa'
         },
         {
-            url: '/library',
-            name: 'library',
-            icon: gamepad,
-            iconSelected: gamepadSelected,
-            label: 'Biblioteca',
-            alt: 'joystick'
-        },
-        {
             url: '/collections',
             name: 'collections',
             icon: folder,
             iconSelected: folderSelected,
             label: 'Coleções',
             alt: 'pasta'
+        },
+        {
+            url: '/library',
+            name: 'library',
+            icon: gamepad,
+            iconSelected: gamepadSelected,
+            label: 'Biblioteca',
+            alt: 'joystick'
         },
         {
             url: '/achievements',

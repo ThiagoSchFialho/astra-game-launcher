@@ -3,20 +3,10 @@
     border-radius: 10px;
 }
 
-.playtime-game-card{
-    position: absolute;
-    bottom: 8px;
-    right: 10px;
-    background-color: #5e3df1e7;
-    background-color: #000000ce;
-    border-radius: 15px;
-    padding: 5px 13px;
-    font-size: 17px;
-}
-
 .game-card-img {
     width: 278px;
     border: var(--border-primary);
     border-radius: 10px;
     box-shadow: var(--shadow);
+    margin-bottom: -3px;
 }

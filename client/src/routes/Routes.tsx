@@ -14,14 +14,20 @@ const AppRoutes = () => {
             <Route path='/' element={<Navigate to='/home' replace />} />
             <Route path='/home' element={<Home />} />
             <Route path='/home/:id' element={<Home />} />
+
             <Route path='/game-page/:page/:id' element={<GamePage />} />
             <Route path='/game-page/:page/:collectionId/:id' element={<GamePage />} />
+
             <Route path='/library' element={<Library />} />
             <Route path='/library/:id' element={<Library />} />
+
             <Route path='/backlog' element={<Backlog />} />
+
             <Route path='/collections' element={<Collections />} />
+
             <Route path='/collection/:collectionId' element={<Collection />} />
             <Route path='/collection/:collectionId/:gameId' element={<Collection />} />
+            
             <Route path='/achievements' element={<Achievements />} />
             <Route path='/achievements/:id' element={<Achievements />} />
         </Routes>
