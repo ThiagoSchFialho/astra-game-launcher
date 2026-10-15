@@ -110,7 +110,7 @@ router.put('/:id', async function (req: Request, res: Response) {
             return res.status(500).json({ error: "Erro ao atualizar coleção." });
         }
 
-        return res.status(201).json(updatedCollection);
+        return res.status(200).json(updatedCollection);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Erro interno do servidor." });

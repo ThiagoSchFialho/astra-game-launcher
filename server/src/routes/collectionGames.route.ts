@@ -96,7 +96,7 @@ router.put('/:id', async function (req: Request, res: Response) {
             return res.status(500).json({ error: "Erro ao atualizar relação." });
         }
 
-        return res.status(201).json(updatedCollectionGame);
+        return res.status(200).json(updatedCollectionGame);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Erro interno do servidor." });

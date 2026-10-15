@@ -78,7 +78,7 @@ router.put('/:id', async function (req: Request, res: Response) {
             return res.status(500).json({ error: "Erro ao atualizar gênero." });
         }
 
-        return res.status(201).json(updatedGenre);
+        return res.status(200).json(updatedGenre);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Erro interno do servidor." });
