@@ -127,7 +127,7 @@ const HorizontalGameList: React.FC<HorizontalGameListProps> = ({ list, selectedG
     };
 
     // SCROLL ==========================================================================
-    const SCROLL_DURATION = 90;
+    const SCROLL_DURATION = 130;
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const itemRefs = useRef<Record<number, HTMLDivElement | null>>({});

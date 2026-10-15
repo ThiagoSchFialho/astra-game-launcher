@@ -32,7 +32,7 @@ const GameCardPortrait: React.FC<GameCardsPortraitProps> = ({ id, steamId, img, 
                 isOpen={isGameActionsMenuOpen}
                 closeMenu={() => handleCloseMenu()}
             />
-            <div className={isFocused ? "game-card-portrait focused" : "game-card-portrait"}>
+            <div className={isFocused ? "game-card-portrait game-card-portrait-focused" : "game-card-portrait"}>
                 <img
                     className="game-card-portrait-img"
                     src={img}

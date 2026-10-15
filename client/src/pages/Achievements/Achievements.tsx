@@ -7,7 +7,7 @@ import { getGameCover } from "../../utils/getGameCover";
 import JoystickSetup from "../../components/JoystickSetup/JoystickSetup";
 import { useSound } from "../../hooks/useSound";
 import GameAchievementPage from "../../components/GameAchievementPage/GameAchievementPage";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface GameAchievementProgress {
     game_id: number;
@@ -22,7 +22,8 @@ type GameWithAchievements = Game & {
 type SortMode = "recent" | "achievements";
 
 const Achievements: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id, originPage, collectionId } = useParams<{ id: string, originPage: string, collectionId: string }>();
+    const navigation = useNavigate();
     const { playSelectSound, playConfirmSound } = useSound();
     const { fetchGames, getAchievementsProgress } = useDb();
     const [games, setGames] = useState<GameWithAchievements[]>([]);
@@ -138,6 +139,13 @@ const Achievements: React.FC = () => {
     };
 
     const handleCloseGameAchievementPage = () => {
+        if (originPage) {
+            if (originPage === 'collection') {
+                navigation(`/game-page/${originPage}/${collectionId}/${id}`);
+            } else {
+                navigation(`/game-page/${originPage}/${id}`);
+            }
+        }
         setCommandCoolDown(true);
         setIsOnGameAchievementPage(false);
         setTimeout(() => {

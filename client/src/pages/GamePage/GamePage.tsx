@@ -170,7 +170,7 @@ const GamePage: React.FC = () => {
         {
             label: 'Conquistas',
             type: 'achievements',
-            action: () => navigation(`/achievements/${currentGame?.id}`)
+            action: () => {page === 'collection' ? navigation(`/achievements/${page}/${collectionId}/${currentGame?.id}`) : navigation(`/achievements/${page}/${currentGame?.id}`) }
         }
     ];
 

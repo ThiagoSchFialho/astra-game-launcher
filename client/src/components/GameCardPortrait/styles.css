@@ -1,5 +1,10 @@
 .game-card-portrait {
     border-radius: 10px;
+    transition: 0.1s;
+}
+
+.game-card-portrait-focused {
+    scale: 1.1;
 }
 
 .game-card-portrait-img {
