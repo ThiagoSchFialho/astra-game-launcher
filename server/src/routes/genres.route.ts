@@ -30,7 +30,7 @@ router.get('/', async function (req: Request, res: Response) {
         const genres = await genresModel.getAllGenres();
 
         if (!genres?.length) {
-            return res.status(404).json({ message: "Nenhum gênero encontrado." });
+            return res.status(404).json({ error: "Nenhum gênero encontrado." });
         }
 
         return res.status(200).json(genres);
@@ -47,7 +47,7 @@ router.get('/:id', async function (req: Request, res: Response) {
         const genre = await genresModel.getGenre(Number(id));
 
         if (!genre) {
-            return res.status(404).json({ message: "Nenhum gênero encontrado." });
+            return res.status(404).json({ error: "Nenhum gênero encontrado." });
         }
 
         return res.status(200).json(genre);
@@ -69,7 +69,7 @@ router.put('/:id', async function (req: Request, res: Response) {
         const genre = await genresModel.getGenre(Number(id));
 
         if (!genre) {
-            return res.status(404).json({ message: "Gênero não encontrado." });
+            return res.status(404).json({ error: "Gênero não encontrado." });
         }
 
         const updatedGenre = await genresModel.updateGenre(Number(id), name);

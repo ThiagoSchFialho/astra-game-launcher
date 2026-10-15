@@ -30,7 +30,7 @@ router.get('/with-games', async function (req: Request, res: Response) {
         const collections = await collectionsModel.getAllCollectionsWithGames();
 
         if (!collections?.length) {
-            return res.status(404).json({ message: "Nenhuma coleção encontrada." });
+            return res.status(404).json({ error: "Nenhuma coleção encontrada." });
         }
 
         return res.status(200).json(collections);
@@ -45,7 +45,7 @@ router.get('/', async function (req: Request, res: Response) {
         const collections = await collectionsModel.getAllCollections();
 
         if (!collections?.length) {
-            return res.status(404).json({ message: "Nenhuma coleção encontrada." });
+            return res.status(404).json({ error: "Nenhuma coleção encontrada." });
         }
 
         return res.status(200).json(collections);
@@ -62,7 +62,7 @@ router.get('/:id', async function (req: Request, res: Response) {
         const collection = await collectionsModel.getCollection(Number(id));
 
         if (!collection) {
-            return res.status(404).json({ message: "Nenhuma coleção encontrada." });
+            return res.status(404).json({ error: "Nenhuma coleção encontrada." });
         }
 
         return res.status(200).json(collection);
@@ -79,7 +79,7 @@ router.get('/:id/with-games', async function (req: Request, res: Response) {
         const collection = await collectionsModel.getCollectionWithGames(Number(id));
 
         if (!collection) {
-            return res.status(404).json({ message: "Coleção não encontrada." });
+            return res.status(404).json({ error: "Coleção não encontrada." });
         }
 
         return res.status(200).json(collection);
@@ -101,7 +101,7 @@ router.put('/:id', async function (req: Request, res: Response) {
         const collection = await collectionsModel.getCollection(Number(id));
 
         if (!collection) {
-            return res.status(404).json({ message: "Coleção não encontrada." });
+            return res.status(404).json({ error: "Coleção não encontrada." });
         }
 
         const updatedCollection = await collectionsModel.updateCollection(Number(id), title);

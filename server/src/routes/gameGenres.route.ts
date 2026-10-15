@@ -30,7 +30,7 @@ router.get('/', async function (req: Request, res: Response) {
         const gameGenres = await gameGenresModel.getAllGameGenres();
 
         if (!gameGenres?.length) {
-            return res.status(404).json({ message: "Nenhuma relação encontrada." });
+            return res.status(404).json({ error: "Nenhuma relação encontrada." });
         }
 
         return res.status(200).json(gameGenres);
@@ -47,7 +47,7 @@ router.get('/:id', async function (req: Request, res: Response) {
         const gameGenre = await gameGenresModel.getGameGenre(Number(id));
 
         if (!gameGenre) {
-            return res.status(404).json({ message: "Nenhuma relação encontrada." });
+            return res.status(404).json({ error: "Nenhuma relação encontrada." });
         }
 
         return res.status(200).json(gameGenre);
@@ -69,7 +69,7 @@ router.put('/:id', async function (req: Request, res: Response) {
         const gameGenre = await gameGenresModel.getGameGenre(Number(id));
 
         if (!gameGenre) {
-            return res.status(404).json({ message: "Relação não encontrada." });
+            return res.status(404).json({ error: "Relação não encontrada." });
         }
 
         const updatedGameGenre = await gameGenresModel.updateGameGenre(Number(id), game_id, genre_id);

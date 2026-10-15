@@ -77,14 +77,14 @@ router.get('/', async function (req: Request, res: Response) {
         if (steam_id) {
             const game = await gamesModel.getGameBySteamId(Number(steam_id));
             if (!game) {
-                return res.status(404).json({ message: "Nenhum jogo encontrado." });
+                return res.status(404).json({ error: "Nenhum jogo encontrado." });
             }
             return res.status(200).json(game);
         }
 
         const games = await gamesModel.getAllGames();
         if (!games?.length) {
-            return res.status(404).json({ message: "Nenhum jogo encontrado." });
+            return res.status(404).json({ error: "Nenhum jogo encontrado." });
         }
         return res.status(200).json(games);
 
@@ -101,14 +101,14 @@ router.get('/with-genres', async function (req: Request, res: Response) {
         if (steam_id) {
             const game = await gamesModel.getGameBySteamIdWithGenres(Number(steam_id));
             if (!game) {
-                return res.status(404).json({ message: "Nenhum jogo encontrado." });
+                return res.status(404).json({ error: "Nenhum jogo encontrado." });
             }
             return res.status(200).json(game);
         }
 
         const games = await gamesModel.getAllGamesWithGenres();
         if (!games?.length) {
-            return res.status(404).json({ message: "Nenhum jogo encontrado." });
+            return res.status(404).json({ error: "Nenhum jogo encontrado." });
         }
         return res.status(200).json(games);
 
@@ -124,7 +124,7 @@ router.get('/with-genres/:id', async function (req: Request, res: Response) {
     try {
         const game = await gamesModel.getGameByIdWithGenres(Number(id));
         if (!game) {
-            return res.status(404).json({ message: "Nenhum jogo encontrado." });
+            return res.status(404).json({ error: "Nenhum jogo encontrado." });
         }
         return res.status(200).json(game);
 
@@ -140,7 +140,7 @@ router.get('/:id', async function (req: Request, res: Response) {
     try {
         const game = await gamesModel.getGameById(Number(id));
         if (!game) {
-            return res.status(404).json({ message: "Nenhum jogo encontrado." });
+            return res.status(404).json({ error: "Nenhum jogo encontrado." });
         }
         return res.status(200).json(game);
 
@@ -184,7 +184,7 @@ router.put('/:id', async function (req: Request, res: Response) {
         const game = await gamesModel.getGameById(Number(id));
 
         if (!game) {
-            return res.status(404).json({ message: "Jogo encontrado." });
+            return res.status(404).json({ error: "Jogo encontrado." });
         }
 
         const updatedGame = await gamesModel.updateGame(Number(id), {
@@ -225,7 +225,7 @@ router.patch('/:id/status', async function (req: Request, res: Response) {
         const updatedGame = await gamesModel.updateGameStatus(Number(id), status);
 
         if (!updatedGame) {
-            return res.status(404).json({ message: "Jogo não encontrado." });
+            return res.status(404).json({ error: "Jogo não encontrado." });
         }
 
         return res.status(200).json(updatedGame);
@@ -247,7 +247,7 @@ router.patch('/:id/hidden', async function (req: Request, res: Response) {
         const updatedGame = await gamesModel.updateGameHidden(Number(id), hidden);
 
         if (!updatedGame) {
-            return res.status(404).json({ message: "Jogo não encontrado." });
+            return res.status(404).json({ error: "Jogo não encontrado." });
         }
 
         return res.status(200).json(updatedGame);
@@ -269,7 +269,7 @@ router.patch('/:id/beatable', async function (req: Request, res: Response) {
         const updatedGame = await gamesModel.updateGameBeatable(Number(id), beatable);
 
         if (!updatedGame) {
-            return res.status(404).json({ message: "Jogo não encontrado." });
+            return res.status(404).json({ error: "Jogo não encontrado." });
         }
 
         return res.status(200).json(updatedGame);
@@ -291,7 +291,7 @@ router.patch('/:id/rtime_last_played', async function (req: Request, res: Respon
         const updatedGame = await gamesModel.updateGameRtimeLastPlayed(Number(id), rtime_last_played);
 
         if (!updatedGame) {
-            return res.status(404).json({ message: "Jogo não encontrado." });
+            return res.status(404).json({ error: "Jogo não encontrado." });
         }
 
         return res.status(200).json(updatedGame);
@@ -312,7 +312,7 @@ router.delete('/:id', async function (req: Request, res: Response) {
         const game = await gamesModel.deleteGame(Number(id));
 
         if (!game) {
-            return res.status(500).json({ erro: "Erro ao excluir o jogo." });
+            return res.status(500).json({ error: "Erro ao excluir o jogo." });
         }
 
         return res.status(200).json(game);

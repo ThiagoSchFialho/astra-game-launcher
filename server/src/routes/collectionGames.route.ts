@@ -31,7 +31,7 @@ router.get('/', async function (req: Request, res: Response) {
         const collectionGames = await collectionGamesModel.getAllCollectionGames();
 
         if (!collectionGames?.length) {
-            return res.status(404).json({ message: "Nenhuma relação encontrada." });
+            return res.status(404).json({ error: "Nenhuma relação encontrada." });
         }
 
         return res.status(200).json(collectionGames);
@@ -48,7 +48,7 @@ router.get('/game/:id', async function (req: Request, res: Response) {
         const collectionGame = await collectionGamesModel.getCollectionGamesByGameId(Number(id));
 
         if (!collectionGame) {
-            return res.status(404).json({ message: "Nenhuma relação encontrada." });
+            return res.status(404).json({ error: "Nenhuma relação encontrada." });
         }
 
         return res.status(200).json(collectionGame);
@@ -65,7 +65,7 @@ router.get('/:id', async function (req: Request, res: Response) {
         const collectionGame = await collectionGamesModel.getCollectionGames(Number(id));
 
         if (!collectionGame) {
-            return res.status(404).json({ message: "Nenhuma relação encontrada." });
+            return res.status(404).json({ error: "Nenhuma relação encontrada." });
         }
 
         return res.status(200).json(collectionGame);
@@ -87,7 +87,7 @@ router.put('/:id', async function (req: Request, res: Response) {
         const collectionGame = await collectionGamesModel.getCollectionGames(Number(id));
 
         if (!collectionGame) {
-            return res.status(404).json({ message: "Relação não encontrada." });
+            return res.status(404).json({ error: "Relação não encontrada." });
         }
 
         const updatedCollectionGame = await collectionGamesModel.updateCollectionGames(Number(id), collection_id, game_id);
