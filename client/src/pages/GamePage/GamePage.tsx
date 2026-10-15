@@ -80,6 +80,13 @@ const GamePage: React.FC = () => {
     const [selectedIndex, setSelectedIndex] = useState(BANNER_INDEX);
     const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
     const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const [commandCoolDown, setCommandCoolDown] = useState<boolean>(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setCommandCoolDown(false);
+        }, 100);
+    }, []);
 
     const getGame = async () => {
         const game = await getGameById(String(id));
@@ -186,6 +193,7 @@ const GamePage: React.FC = () => {
         }
         if (!isHeaderMenuOpen) {
             if (command === 'B') {
+                if (commandCoolDown) return;
                 if (page === 'collection') {
                     navigation(`/${page}/${collectionId}/${id}`);
                 } else {
