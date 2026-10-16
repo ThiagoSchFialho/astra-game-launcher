@@ -10,6 +10,7 @@ import { useCollection } from '../../hooks/useCollection';
 import { useSound } from '../../hooks/useSound';
 import plus from '../../assets/icons/plus.svg';
 import type { ICollection } from '../../types/collectionsType';
+import CollectionActionsMenu from '../../components/CollectionActionMenu/CollectionActionMenu';
 
 const BUTTON_INDEX = 0;
 
@@ -24,22 +25,17 @@ const Collections: React.FC = () => {
     const [commandCoolDown, setCommandCoolDown] = useState(false);
     const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const getCollections = async () => {
-            setIsLoading(true);
-            const collections = await fetchCollections();
-            if (collections) {
-                setIsLoading(false);
-                setCollectionsList(collections);
-            }
-            if (collections.length === 0) {
-                setSelectedIndex(0);
-            }
-        }
+    const getCollections = async () => {
+        setIsLoading(true);
+        const collections = await fetchCollections();
+        if (collections) setCollectionsList(collections);
+        setIsLoading(false);
+        if (!collections || collections.length === 0) setSelectedIndex(0);
+    };
 
-        getCollections();
-    }, []);
+    useEffect(() => { getCollections(); }, []);
 
     const handleCreateCollection = async (phrase: string) => {
         playConfirmSound();
@@ -50,8 +46,10 @@ const Collections: React.FC = () => {
             if (!result) {
                 return;
             }
-            window.location.reload();
         }
+        setIsCollectionFormOpen(false);
+        setCollectionTitle('');
+        getCollections();
     }
 
     // --- Refs para evitar stale closure no joystickNavigation -------------
@@ -123,6 +121,12 @@ const Collections: React.FC = () => {
                 if (collection) {
                     navigation(`/collection/${collection.id}`);
                 }
+            } else if (command === 'Y') {
+                const collection = collectionsList[currentIndex - 1];
+                if (collection) {
+                    playPopupSound();
+                    setIsActionsMenuOpen(true);
+                }
             }
         }
     };
@@ -174,9 +178,28 @@ const Collections: React.FC = () => {
     }, [selectedIndex]);
     // SCROLL ==========================================================================
 
+    const handleCloseCollectionsMenu = () => {
+        setCommandCoolDown(true);
+        setIsActionsMenuOpen(false)
+        setInterval(() => {
+            setCommandCoolDown(false);
+        }, 100);
+    }
+
     return (
         <>
-            {!isCollectionFormOpen && <JoystickSetup command={joystickNavigation} />}
+            {!isCollectionFormOpen && !isActionsMenuOpen && <JoystickSetup command={joystickNavigation} />}
+
+            {isActionsMenuOpen && collectionsList[selectedIndex - 1] && (
+                <CollectionActionsMenu
+                    collectionId={collectionsList[selectedIndex - 1].id}
+                    isOpen={isActionsMenuOpen}
+                    closeMenu={handleCloseCollectionsMenu}
+                    onRename={getCollections}
+                    onDelete={() => { setSelectedIndex(1); getCollections(); }}
+                />
+            )}
+
             <div className="main-content">
                 <div ref={scrollContainerRef} className="collections-scroll-container">
                     <div className="collections-header">

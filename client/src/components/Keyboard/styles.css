@@ -1,4 +1,5 @@
 .keyboard {
+    z-index: 1000;
     width: 1040px;
     position: absolute;
     left: 50%;
